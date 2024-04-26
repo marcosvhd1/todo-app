@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -6,8 +8,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { TodoService } from "@/services/todo/todo-service";
+import { Todo } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { Loader } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export function Content() {
+  const searchParams = useSearchParams();
+  const title = searchParams.get("title");
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["todos", title],
+    queryFn: () => TodoService.getAll(title),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center p-5">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -20,18 +43,22 @@ export function Content() {
           </TableRow>
         </TableHeader>
         <TableBody className="text-sm">
-          <TableRow>
-            <TableCell>1785</TableCell>
-            <TableCell>Send order to client</TableCell>
-            <TableCell>Completed</TableCell>
-            <TableCell>High</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>8782</TableCell>
-            <TableCell>We need to bypass the neural TCP card!</TableCell>
-            <TableCell>Pending</TableCell>
-            <TableCell>Medium</TableCell>
-          </TableRow>
+          {Array.isArray(data) ? (
+            data.map((todo: Todo) => {
+              return (
+                <TableRow key={todo.id}>
+                  <TableCell>{todo.id}</TableCell>
+                  <TableCell>{todo.title}</TableCell>
+                  <TableCell>{todo.status}</TableCell>
+                  <TableCell>{todo.priority}</TableCell>
+                </TableRow>
+              );
+            })
+          ) : (
+            <TableRow>
+              <TableCell>No data found</TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>

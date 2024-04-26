@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Filter } from "./components/filter";
 
@@ -15,8 +17,26 @@ interface ToolbarProps {
 export function Toolbar() {
   const form = useForm<ToolbarProps>();
 
-  const handleFilter = (data: ToolbarProps) => {
-    console.log(data);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  form.setValue("title", searchParams.get("title") ?? "");
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (value === "") params.delete(name);
+      else params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  const handleFilter = async (data: ToolbarProps) => {
+    router.push(pathname + "?" + createQueryString("title", data.title));
   };
 
   return (
