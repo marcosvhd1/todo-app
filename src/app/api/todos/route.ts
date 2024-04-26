@@ -1,6 +1,6 @@
 import { prisma } from "@/services/database";
 import { NextRequest, NextResponse } from "next/server";
-import { TodoMapper } from "./mappers/todo-body-mapper";
+import { TodoBodyMapper } from "./mappers/todo-body-mapper";
 
 export async function GET() {
   try {
@@ -13,10 +13,10 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const data = await TodoMapper.toPrisma(request);
-
   try {
+    const data = await TodoBodyMapper.toPrisma(request);
     const todo = await prisma.todo.create({ data });
+
     return NextResponse.json({ todo });
   } catch (error) {
     return NextResponse.json({ error });
