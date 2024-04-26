@@ -10,7 +10,7 @@ function getUrl(path?: string) {
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  if (!pathname.includes("/todos")) {
+  if (!pathname.startsWith("/todos")) {
     return NextResponse.redirect(new URL(getUrl("/todos")));
   }
 }
