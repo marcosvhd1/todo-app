@@ -2,9 +2,17 @@ import { prisma } from "@/services/database";
 import { NextRequest, NextResponse } from "next/server";
 import { TodoBodyMapper } from "./mappers/todo-body-mapper";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const title = request.nextUrl.searchParams.get("title");
+
   try {
-    const todos = await prisma.todo.findMany();
+    const todos = await prisma.todo.findMany({
+      where: {
+        title: {
+          contains: title ?? "",
+        },
+      },
+    });
 
     return NextResponse.json({ todos });
   } catch (error) {
