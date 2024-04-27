@@ -1,5 +1,7 @@
 "use client";
 
+import { getAll, remove } from "@/app/todos/actions";
+import { headers } from "@/app/todos/components/data-table/headers";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,12 +17,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TodoService } from "@/services/todo/todo-service";
 import { Todo } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Ellipsis, Loader, SquarePen, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { headers } from "./headers";
 
 export function DataTable() {
   const queryClient = useQueryClient();
@@ -29,11 +29,11 @@ export function DataTable() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["todos", title],
-    queryFn: () => TodoService.getAllTodos(title),
+    queryFn: () => getAll(title),
   });
 
   const mutation = useMutation({
-    mutationFn: (todoId: number) => TodoService.deleteTodo(todoId),
+    mutationFn: (todoId: number) => remove(todoId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos", title] });
     },

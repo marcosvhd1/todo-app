@@ -1,5 +1,7 @@
 "use client";
 
+import { Filter } from "@/app/todos/components/toolbar/components/filter";
+import { TodoModal } from "@/app/todos/components/toolbar/modal/todo-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Todo } from "@prisma/client";
@@ -7,8 +9,6 @@ import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { Filter } from "./components/filter";
-import { TodoModal } from "./modal/todo-modal";
 
 export function Toolbar() {
   const form = useForm<Todo>();

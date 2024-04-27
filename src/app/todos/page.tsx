@@ -1,6 +1,6 @@
-import { DataTable } from "./components/data-table/data-table";
-import { Header } from "./components/header/header";
-import { Toolbar } from "./components/toolbar/toolbar";
+import { DataTable } from "@/app/todos/components/data-table/data-table";
+import { Header } from "@/app/todos/components/header/header";
+import { Toolbar } from "@/app/todos/components/toolbar/toolbar";
 
 export default function Page() {
   return (
