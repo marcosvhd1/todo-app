@@ -2,20 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Todo } from "@prisma/client";
 import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Filter } from "./components/filter";
-
-interface ToolbarProps {
-  title: string;
-  status: string;
-  priority: string;
-}
+import { TodoModal } from "./modal/todo-modal";
 
 export function Toolbar() {
-  const form = useForm<ToolbarProps>();
+  const form = useForm<Todo>();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -35,19 +31,25 @@ export function Toolbar() {
     [searchParams]
   );
 
-  const handleFilter = async (data: ToolbarProps) => {
+  const handleFilter = async (data: Todo) => {
     router.push(pathname + "?" + createQueryString("title", data.title));
   };
 
   return (
-    <form onSubmit={form.handleSubmit(handleFilter)} className="flex space-x-5">
-      <Input placeholder="Filter tasks..." {...form.register("title")} />
-      <Filter title="Status" />
-      <Filter title="Priority" />
-      <Button type="submit">
-        <Search className="size-4 mr-2" />
-        Search
-      </Button>
-    </form>
+    <div className="flex justify-between items-center space-x-3">
+      <form
+        onSubmit={form.handleSubmit(handleFilter)}
+        className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-3"
+      >
+        <Input placeholder="Filter tasks..." {...form.register("title")} />
+        <Filter title="Status" />
+        <Filter title="Priority" />
+        <Button type="submit">
+          <Search className="size-4 mr-2" />
+          Search
+        </Button>
+      </form>
+      <TodoModal />
+    </div>
   );
 }
