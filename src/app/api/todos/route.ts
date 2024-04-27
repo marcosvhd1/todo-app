@@ -12,6 +12,9 @@ export async function GET(request: NextRequest) {
           contains: title ?? "",
         },
       },
+      orderBy: {
+        id: "desc",
+      },
     });
 
     return NextResponse.json({ todos });

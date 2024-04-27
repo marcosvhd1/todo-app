@@ -40,16 +40,13 @@ export function Toolbar() {
   };
 
   return (
-    <form
-      onSubmit={form.handleSubmit(handleFilter)}
-      className="flex items-center space-x-4"
-    >
+    <form onSubmit={form.handleSubmit(handleFilter)} className="flex space-x-5">
       <Input placeholder="Filter tasks..." {...form.register("title")} />
       <Filter title="Status" />
       <Filter title="Priority" />
       <Button type="submit">
         <Search className="size-4 mr-2" />
-        Filtrar
+        Search
       </Button>
     </form>
   );

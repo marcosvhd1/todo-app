@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Table,
   TableBody,
   TableCell,
@@ -10,17 +16,25 @@ import {
 } from "@/components/ui/table";
 import { TodoService } from "@/services/todo/todo-service";
 import { Todo } from "@prisma/client";
-import { useQuery } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Ellipsis, Loader, SquarePen, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 export function Content() {
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const title = searchParams.get("title");
 
   const { data, isLoading } = useQuery({
     queryKey: ["todos", title],
-    queryFn: () => TodoService.getAll(title),
+    queryFn: () => TodoService.getAllTodos(title),
+  });
+
+  const mutation = useMutation({
+    mutationFn: (todoId: number) => TodoService.deleteTodo(todoId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos", title] });
+    },
   });
 
   if (isLoading) {
@@ -40,6 +54,7 @@ export function Content() {
             <TableHead>Title</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Priority</TableHead>
+            <TableHead className="w-0"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="text-sm">
@@ -51,6 +66,27 @@ export function Content() {
                   <TableCell>{todo.title}</TableCell>
                   <TableCell>{todo.status}</TableCell>
                   <TableCell>{todo.priority}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <div className="mx-2 my-1">
+                          <Ellipsis className="size-5" />
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="p-2 space-y-2">
+                        <DropdownMenuItem
+                          onClick={() => mutation.mutate(todo.id)}
+                        >
+                          <Trash2 className="text-red-500 size-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <SquarePen className="text-amber-500 size-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               );
             })
