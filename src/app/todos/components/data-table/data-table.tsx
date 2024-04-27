@@ -20,7 +20,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Ellipsis, Loader, SquarePen, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
-export function Content() {
+export function DataTable() {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const title = searchParams.get("title");
