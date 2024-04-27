@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ import { Todo } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Ellipsis, Loader, SquarePen, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { headers } from "./headers";
 
 export function DataTable() {
   const queryClient = useQueryClient();
@@ -50,11 +52,9 @@ export function DataTable() {
       <Table>
         <TableHeader>
           <TableRow className="text-xs">
-            <TableHead>ID</TableHead>
-            <TableHead>Title</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Priority</TableHead>
-            <TableHead className="w-0"></TableHead>
+            {headers.map((row) => {
+              return <TableHead key={row.key}>{row.label}</TableHead>;
+            })}
           </TableRow>
         </TableHeader>
         <TableBody className="text-sm">
@@ -66,12 +66,12 @@ export function DataTable() {
                   <TableCell>{todo.title}</TableCell>
                   <TableCell>{todo.status}</TableCell>
                   <TableCell>{todo.priority}</TableCell>
-                  <TableCell>
+                  <TableCell className="w-0">
                     <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <div className="mx-2 my-1">
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost">
                           <Ellipsis className="size-5" />
-                        </div>
+                        </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="p-2 space-y-2">
                         <DropdownMenuItem
