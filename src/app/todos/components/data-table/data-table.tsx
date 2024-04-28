@@ -1,6 +1,7 @@
 "use client";
 
 import { getAll, remove } from "@/app/todos/actions/actions";
+import { priorities, statuses } from "@/app/todos/data/data";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -22,7 +24,7 @@ import { Ellipsis, Loader, SquarePen, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 const headers: { key: string; label: string }[] = [
-  { key: "id", label: "ID" },
+  { key: "id", label: "Task" },
   { key: "title", label: "Title" },
   { key: "status", label: "Status" },
   { key: "priority", label: "Priority" },
@@ -58,21 +60,53 @@ export function DataTable() {
     <div className="rounded-md border">
       <Table>
         <TableHeader>
-          <TableRow className="text-xs">
+          <TableRow>
             {headers.map((row) => {
               return <TableHead key={row.key}>{row.label}</TableHead>;
             })}
           </TableRow>
         </TableHeader>
-        <TableBody className="text-sm">
+        <TableBody>
           {Array.isArray(data) ? (
             data.map((todo: Todo) => {
               return (
                 <TableRow key={todo.id}>
-                  <TableCell>{todo.id}</TableCell>
-                  <TableCell>{todo.title}</TableCell>
-                  <TableCell>{todo.status}</TableCell>
-                  <TableCell>{todo.priority}</TableCell>
+                  <TableCell>TASK-{todo.id}</TableCell>
+                  <TableCell className="font-semibold text-base sm:max-w-[20rem] sm:whitespace-nowrap sm:truncate">
+                    {todo.title}
+                  </TableCell>
+                  <TableCell>
+                    {statuses.map((status) => {
+                      if (status.value === todo.status) {
+                        const Icon = status.icon;
+                        return (
+                          <Label
+                            key={status.value}
+                            className="flex items-center"
+                          >
+                            <Icon className="size-4 mr-2" />
+                            {status.label}
+                          </Label>
+                        );
+                      }
+                    })}
+                  </TableCell>
+                  <TableCell>
+                    {priorities.map((priority) => {
+                      if (priority.value === todo.priority) {
+                        const Icon = priority.icon;
+                        return (
+                          <Label
+                            key={priority.value}
+                            className="flex items-center"
+                          >
+                            <Icon className="size-4 mr-2" />
+                            {priority.label}
+                          </Label>
+                        );
+                      }
+                    })}
+                  </TableCell>
                   <TableCell className="w-0">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
