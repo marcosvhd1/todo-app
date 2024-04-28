@@ -1,6 +1,6 @@
 "use client";
 
-import { getAll, remove } from "@/app/todos/actions";
+import { getAll, remove } from "@/app/todos/actions/actions";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
