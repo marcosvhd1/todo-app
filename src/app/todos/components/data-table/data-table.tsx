@@ -1,7 +1,6 @@
 "use client";
 
 import { getAll, remove } from "@/app/todos/actions";
-import { headers } from "@/app/todos/components/data-table/headers";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,6 +20,14 @@ import { Todo } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Ellipsis, Loader, SquarePen, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+
+const headers: { key: string; label: string }[] = [
+  { key: "id", label: "ID" },
+  { key: "title", label: "Title" },
+  { key: "status", label: "Status" },
+  { key: "priority", label: "Priority" },
+  { key: "actions", label: "" },
+];
 
 export function DataTable() {
   const queryClient = useQueryClient();
