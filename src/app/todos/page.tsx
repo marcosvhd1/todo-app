@@ -7,9 +7,7 @@ export default function Page() {
     <div className="h-screen grid grid-rows-[5rem_13rem_1fr] sm:grid-rows-[5rem_5rem_1fr] p-6">
       <Header />
       <Toolbar />
-      <div className="overflow-y-auto">
-        <DataTable />
-      </div>
+      <DataTable />
     </div>
   );
 }
