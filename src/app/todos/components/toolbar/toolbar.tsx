@@ -11,7 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { create } from "../../actions/actions";
+import { upsert } from "../../actions/actions";
 
 export function Toolbar() {
   const form = useForm<Todo>();
@@ -23,11 +23,13 @@ export function Toolbar() {
   const searchParams = useSearchParams();
 
   const mutation = useMutation({
-    mutationFn: (data: Todo) => create(data),
+    mutationFn: (data: Todo) => upsert(data),
     onSuccess: () => queryClient.invalidateQueries(),
   });
 
   const handleCreate = async (data: Todo) => {
+    data.id = -1;
+
     mutation.mutate(data);
 
     toast({

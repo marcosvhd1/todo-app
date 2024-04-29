@@ -26,10 +26,16 @@ export async function getAll(title: string, page: number, limit: number) {
   };
 }
 
-export async function create(fields: Todo) {
+export async function upsert(fields: Todo) {
   try {
     const data = await TodoBodyMapper.toPrisma(fields);
-    const todo = await prisma.todo.create({ data });
+    const todo = await prisma.todo.upsert({
+      update: data,
+      create: data,
+      where: {
+        id: fields.id,
+      },
+    });
 
     return todo;
   } catch (error) {
