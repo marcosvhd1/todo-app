@@ -27,19 +27,20 @@ const headers: { key: string; label: string }[] = [
 ];
 
 export function DataTable() {
-  const dataPerPage = 50;
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
+
   const title = searchParams.get("title");
   const page = searchParams.get("page") ?? "1";
+
+  const dataPerPage = 50;
+  const lastDataIndex = Number(page) * dataPerPage;
+  const firstDataIndex = lastDataIndex - dataPerPage;
 
   const { data, isLoading } = useQuery({
     queryKey: ["todos", title],
     queryFn: () => getAll(title),
   });
-
-  const lastDataIndex = Number(page) * dataPerPage;
-  const firstDataIndex = lastDataIndex - dataPerPage;
 
   const currentTodos = Array.isArray(data)
     ? data.slice(firstDataIndex, lastDataIndex)
