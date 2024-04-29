@@ -27,7 +27,7 @@ const headers: { key: string; label: string }[] = [
 ];
 
 export function DataTable() {
-  const limit = 50;
+  const limit = 30;
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 

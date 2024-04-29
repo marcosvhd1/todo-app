@@ -9,41 +9,31 @@ import { Todo } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { create } from "../../actions/actions";
 
 export function Toolbar() {
   const form = useForm<Todo>();
 
-  const router = useRouter();
   const pathname = usePathname();
+  const { replace } = useRouter();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
-
-  form.setValue("title", searchParams.get("title") ?? "");
 
   const mutation = useMutation({
     mutationFn: (data: Todo) => create(data),
     onSuccess: () => queryClient.invalidateQueries(),
   });
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-
-      if (value === "") params.delete(name);
-      else params.set(name, value);
-
-      params.set("page", "1");
-
-      return params.toString();
-    },
-    [searchParams]
-  );
-
   const handleFilter = async (data: Todo) => {
-    router.push(pathname + "?" + createQueryString("title", data.title));
+    const params = new URLSearchParams(searchParams);
+
+    if (data.title !== "") params.set("title", data.title);
+    else params.delete("title");
+
+    params.set("page", "1");
+
+    replace(`${pathname}?${params.toString()}`);
   };
 
   return (
@@ -52,7 +42,11 @@ export function Toolbar() {
         onSubmit={form.handleSubmit(handleFilter)}
         className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-3"
       >
-        <Input placeholder="Filter tasks..." {...form.register("title")} />
+        <Input
+          placeholder="Filter tasks..."
+          defaultValue={searchParams.get("title") ?? ""}
+          {...form.register("title")}
+        />
         <Filter title="Status" />
         <Filter title="Priority" />
         <Button type="submit">
