@@ -27,6 +27,8 @@ export function Toolbar() {
       if (value === "") params.delete(name);
       else params.set(name, value);
 
+      params.set("page", "1");
+
       return params.toString();
     },
     [searchParams]

@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
 function getUrl(path?: string) {
-  const baseUrl = "http://localhost:3000" || "";
+  const baseUrl = "http://localhost:3000";
   const normalizedPath =
     path && !path.startsWith("/") ? `/${path}` : path || "";
   return `${baseUrl}${normalizedPath}`;
 }
 
 export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+  const { pathname } = request.nextUrl;
 
   if (!pathname.startsWith("/todos")) {
-    return NextResponse.redirect(new URL(getUrl("/todos")));
+    return NextResponse.redirect(new URL(getUrl("/todos?page=1")));
   }
 }
 

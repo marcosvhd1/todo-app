@@ -22,7 +22,6 @@ import { Todo } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Ellipsis, Loader, SquarePen, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
 import { DataTablePagination } from "./data-table-pagination";
 
 const headers: { key: string; label: string }[] = [
@@ -34,19 +33,18 @@ const headers: { key: string; label: string }[] = [
 ];
 
 export function DataTable() {
+  const dataPerPage = 50;
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const title = searchParams.get("title");
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [dataPerPage, setDataPerPage] = useState(50);
+  const page = searchParams.get("page") ?? "1";
 
   const { data, isLoading } = useQuery({
     queryKey: ["todos", title],
     queryFn: () => getAll(title),
   });
 
-  const lastDataIndex = currentPage * dataPerPage;
+  const lastDataIndex = Number(page) * dataPerPage;
   const firstDataIndex = lastDataIndex - dataPerPage;
 
   const currentTodos = Array.isArray(data)
@@ -154,10 +152,7 @@ export function DataTable() {
       </div>
       <DataTablePagination
         totalData={data !== undefined ? data.length : 0}
-        currentPage={currentPage}
         dataPerPage={dataPerPage}
-        setCurrentPage={setCurrentPage}
-        setDataPerPage={setDataPerPage}
       />
     </>
   );
