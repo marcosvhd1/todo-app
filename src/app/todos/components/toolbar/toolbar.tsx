@@ -1,11 +1,12 @@
 "use client";
 
 import { Filter } from "@/app/todos/components/toolbar/components/filter";
-import { TodoModal } from "@/app/todos/components/toolbar/modal/todo-modal";
+import { TodoModalContent } from "@/app/todos/components/toolbar/modal/todo-modal";
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Todo } from "@prisma/client";
-import { Search } from "lucide-react";
+import { PlusCircle, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
@@ -49,7 +50,15 @@ export function Toolbar() {
           Search
         </Button>
       </form>
-      <TodoModal />
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button>
+            <PlusCircle className="size-4 mr-2" />
+            Create
+          </Button>
+        </AlertDialogTrigger>
+        <TodoModalContent />
+      </AlertDialog>
     </div>
   );
 }
