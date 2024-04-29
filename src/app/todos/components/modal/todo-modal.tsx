@@ -6,15 +6,14 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Todo } from "@prisma/client";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, UseFormReturn } from "react-hook-form";
 
 interface TodoModalProps {
+  form: UseFormReturn<Todo, any, undefined>;
   onSubmit: Function;
 }
 
-export function TodoModal({ onSubmit }: TodoModalProps) {
-  const form = useForm<Todo>();
-
+export function TodoModal({ form, onSubmit }: TodoModalProps) {
   return (
     <AlertDialogContent>
       <AlertDialogHeader>

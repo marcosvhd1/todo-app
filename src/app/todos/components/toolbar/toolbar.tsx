@@ -15,6 +15,7 @@ import { upsert } from "../../actions/actions";
 
 export function Toolbar() {
   const form = useForm<Todo>();
+  const filterForm = useForm<Todo>();
   const { toast } = useToast();
 
   const pathname = usePathname();
@@ -51,13 +52,13 @@ export function Toolbar() {
   return (
     <div className="flex justify-between items-center space-x-3">
       <form
-        onSubmit={form.handleSubmit(handleFilter)}
+        onSubmit={filterForm.handleSubmit(handleFilter)}
         className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-3"
       >
         <Input
           placeholder="Filter tasks..."
           defaultValue={searchParams.get("title") ?? ""}
-          {...form.register("title")}
+          {...filterForm.register("title")}
         />
         <Filter title="Status" />
         <Filter title="Priority" />
@@ -73,7 +74,7 @@ export function Toolbar() {
             Create
           </Button>
         </AlertDialogTrigger>
-        <TodoModal onSubmit={handleCreate} />
+        <TodoModal form={form} onSubmit={handleCreate} />
       </AlertDialog>
     </div>
   );

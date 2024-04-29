@@ -90,7 +90,6 @@ export function DataTable() {
                     <DataTableActionsCell
                       todoId={todo.id}
                       removeFunction={handleRemove}
-                      editFunction={() => {}}
                     />
                   </TableRow>
                 );

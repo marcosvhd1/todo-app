@@ -5,25 +5,43 @@ import { prisma } from "@/services/database";
 import { Todo } from "@prisma/client";
 
 export async function getAll(title: string, page: number, limit: number) {
-  const where = {
-    title: {
-      contains: title,
-    },
-  };
+  try {
+    const where = {
+      title: {
+        contains: title,
+      },
+    };
 
-  const [count, todos] = await prisma.$transaction([
-    prisma.todo.count({ where }),
-    prisma.todo.findMany({
-      where,
-      skip: (page - 1) * limit,
-      take: limit,
-    }),
-  ]);
+    const [count, todos] = await prisma.$transaction([
+      prisma.todo.count({ where }),
+      prisma.todo.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ]);
 
-  return {
-    count,
-    todos,
-  };
+    return {
+      count,
+      todos,
+    };
+  } catch (error) {
+    throw new Error(`Error ${error}`);
+  }
+}
+
+export async function getById(id: number) {
+  try {
+    const todo = await prisma.todo.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return todo;
+  } catch (error) {
+    throw new Error(`Error ${error}`);
+  }
 }
 
 export async function upsert(fields: Todo) {
@@ -39,7 +57,7 @@ export async function upsert(fields: Todo) {
 
     return todo;
   } catch (error) {
-    return error;
+    throw new Error(`Error ${error}`);
   }
 }
 
@@ -61,6 +79,6 @@ export async function remove(todoId: number) {
 
     return todo;
   } catch (error) {
-    return error;
+    throw new Error(`Error ${error}`);
   }
 }
