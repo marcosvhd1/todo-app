@@ -11,13 +11,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Table,
   TableBody,
   TableCell,
@@ -26,20 +19,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Todo } from "@prisma/client";
-import {
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
-} from "@radix-ui/react-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Ellipsis,
-  Loader,
-  SquarePen,
-  Trash2,
-} from "lucide-react";
+import { Ellipsis, Loader, SquarePen, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { DataTablePagination } from "./data-table-pagination";
 
 const headers: { key: string; label: string }[] = [
   { key: "id", label: "Task" },
@@ -54,10 +38,20 @@ export function DataTable() {
   const searchParams = useSearchParams();
   const title = searchParams.get("title");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [dataPerPage, setDataPerPage] = useState(50);
+
   const { data, isLoading } = useQuery({
     queryKey: ["todos", title],
     queryFn: () => getAll(title),
   });
+
+  const lastDataIndex = currentPage * dataPerPage;
+  const firstDataIndex = lastDataIndex - dataPerPage;
+
+  const currentTodos = Array.isArray(data)
+    ? data.slice(firstDataIndex, lastDataIndex)
+    : [];
 
   const mutation = useMutation({
     mutationFn: (todoId: number) => remove(todoId),
@@ -86,8 +80,8 @@ export function DataTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Array.isArray(data) ? (
-              data.map((todo: Todo) => {
+            {Array.isArray(currentTodos) ? (
+              currentTodos.map((todo: Todo) => {
                 return (
                   <TableRow key={todo.id}>
                     <TableCell>TASK-{todo.id}</TableCell>
@@ -158,39 +152,13 @@ export function DataTable() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-between items-center pt-5">
-        <div className="flex items-center text-nowrap space-x-3">
-          <Label className="text-base font-semibold">Rows per page</Label>
-          <Select>
-            <SelectTrigger className="px-4 w-20">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="text-nowrap">
-          <Label className="text-base font-semibold">Page 1 of 10</Label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" className="h-8 w-8 p-0">
-            <DoubleArrowLeftIcon className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" className="h-8 w-8 p-0">
-            <ChevronLeftIcon className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" className="h-8 w-8 p-0">
-            <ChevronRightIcon className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" className="h-8 w-8 p-0">
-            <DoubleArrowRightIcon className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <DataTablePagination
+        totalData={data !== undefined ? data.length : 0}
+        currentPage={currentPage}
+        dataPerPage={dataPerPage}
+        setCurrentPage={setCurrentPage}
+        setDataPerPage={setDataPerPage}
+      />
     </>
   );
 }
