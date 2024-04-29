@@ -49,11 +49,10 @@ export function DataTableActionsCell({
   }
 
   function handleEdit(data: any) {
-    data.id = todoId;
     updateMutation.mutate(data);
 
     toast({
-      description: "deu boa feio",
+      description: "The register has been updated!",
     });
   }
 
