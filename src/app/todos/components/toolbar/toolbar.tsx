@@ -1,24 +1,32 @@
 "use client";
 
+import { TodoModal } from "@/app/todos/components/modal/todo-modal";
 import { Filter } from "@/app/todos/components/toolbar/components/filter";
-import { TodoModalContent } from "@/app/todos/components/toolbar/modal/todo-modal";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Todo } from "@prisma/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
+import { create } from "../../actions/actions";
 
 export function Toolbar() {
   const form = useForm<Todo>();
 
   const router = useRouter();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 
   form.setValue("title", searchParams.get("title") ?? "");
+
+  const mutation = useMutation({
+    mutationFn: (data: Todo) => create(data),
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -59,7 +67,7 @@ export function Toolbar() {
             Create
           </Button>
         </AlertDialogTrigger>
-        <TodoModalContent />
+        <TodoModal onSubmit={mutation.mutate} />
       </AlertDialog>
     </div>
   );
