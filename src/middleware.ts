@@ -8,10 +8,12 @@ function getUrl(path?: string) {
 }
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
   if (!pathname.startsWith("/todos")) {
     return NextResponse.redirect(new URL(getUrl("/todos?page=1")));
+  } else if (pathname.startsWith("/todos") && !searchParams.has("page")) {
+    return NextResponse.redirect(new URL(getUrl("?page=1")));
   }
 }
 
