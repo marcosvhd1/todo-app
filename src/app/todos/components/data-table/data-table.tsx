@@ -27,29 +27,22 @@ const headers: { key: string; label: string }[] = [
 ];
 
 export function DataTable() {
+  const limit = 50;
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 
-  const title = searchParams.get("title");
-  const page = searchParams.get("page") ?? "1";
-
-  const dataPerPage = 50;
-  const lastDataIndex = Number(page) * dataPerPage;
-  const firstDataIndex = lastDataIndex - dataPerPage;
+  const title = searchParams.get("title") ?? "";
+  const page = Number(searchParams.get("page")) ?? 1;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["todos", title],
-    queryFn: () => getAll(title),
+    queryKey: ["todos", title, page],
+    queryFn: () => getAll(title, page, limit),
   });
-
-  const currentTodos = Array.isArray(data)
-    ? data.slice(firstDataIndex, lastDataIndex)
-    : [];
 
   const removeMutation = useMutation({
     mutationFn: (todoId: number) => remove(todoId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["todos", title] });
+      queryClient.invalidateQueries({ queryKey: ["todos", title, page] });
     },
   });
 
@@ -73,8 +66,8 @@ export function DataTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Array.isArray(currentTodos) ? (
-              currentTodos.map((todo: Todo) => {
+            {data && Array.isArray(data.todos) ? (
+              data.todos.map((todo: Todo) => {
                 return (
                   <TableRow key={todo.id}>
                     <TableCell>TASK-{todo.id}</TableCell>
@@ -100,8 +93,8 @@ export function DataTable() {
         </Table>
       </div>
       <DataTablePagination
-        totalData={data !== undefined ? data.length : 0}
-        dataPerPage={dataPerPage}
+        totalData={data !== undefined ? data.count : 0}
+        limit={limit}
       />
     </>
   );

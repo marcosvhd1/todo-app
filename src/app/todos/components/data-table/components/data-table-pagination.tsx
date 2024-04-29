@@ -6,12 +6,12 @@ import { useCallback } from "react";
 
 interface DataTablePaginationProps {
   totalData: number;
-  dataPerPage: number;
+  limit: number;
 }
 
 export function DataTablePagination({
   totalData,
-  dataPerPage,
+  limit,
 }: DataTablePaginationProps) {
   const pageNumbers = [];
 
@@ -21,7 +21,7 @@ export function DataTablePagination({
 
   const page = searchParams.get("page") ?? "1";
 
-  for (let i = 1; i <= Math.ceil(totalData / dataPerPage); i++) {
+  for (let i = 1; i <= Math.ceil(totalData / limit); i++) {
     pageNumbers.push(i);
   }
 
