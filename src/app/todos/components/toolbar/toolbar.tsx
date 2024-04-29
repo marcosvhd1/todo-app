@@ -5,6 +5,7 @@ import { Filter } from "@/app/todos/components/toolbar/components/filter";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { Todo } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
@@ -14,6 +15,7 @@ import { create } from "../../actions/actions";
 
 export function Toolbar() {
   const form = useForm<Todo>();
+  const { toast } = useToast();
 
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -24,6 +26,14 @@ export function Toolbar() {
     mutationFn: (data: Todo) => create(data),
     onSuccess: () => queryClient.invalidateQueries(),
   });
+
+  const handleCreate = async (data: Todo) => {
+    mutation.mutate(data);
+
+    toast({
+      description: "The register has been created!",
+    });
+  };
 
   const handleFilter = async (data: Todo) => {
     const params = new URLSearchParams(searchParams);
@@ -61,7 +71,7 @@ export function Toolbar() {
             Create
           </Button>
         </AlertDialogTrigger>
-        <TodoModal onSubmit={mutation.mutate} />
+        <TodoModal onSubmit={handleCreate} />
       </AlertDialog>
     </div>
   );

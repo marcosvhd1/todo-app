@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
 import { Todo } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
@@ -28,6 +29,7 @@ const headers: { key: string; label: string }[] = [
 
 export function DataTable() {
   const limit = 30;
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 
@@ -45,6 +47,15 @@ export function DataTable() {
       queryClient.invalidateQueries({ queryKey: ["todos", title, page] });
     },
   });
+
+  function handleRemove(todoId: number) {
+    removeMutation.mutate(todoId);
+
+    toast({
+      variant: "destructive",
+      description: "The register has been deleted!",
+    });
+  }
 
   if (isLoading) {
     return (
@@ -66,7 +77,7 @@ export function DataTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data && Array.isArray(data.todos) ? (
+            {data && Array.isArray(data.todos) && data.todos.length > 0 ? (
               data.todos.map((todo: Todo) => {
                 return (
                   <TableRow key={todo.id}>
@@ -78,7 +89,7 @@ export function DataTable() {
                     <DataTablePriorityCell todoPriority={todo.priority} />
                     <DataTableActionsCell
                       todoId={todo.id}
-                      removeFunction={removeMutation.mutate}
+                      removeFunction={handleRemove}
                       editFunction={() => {}}
                     />
                   </TableRow>
