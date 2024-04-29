@@ -17,14 +17,19 @@ export function ModalContent() {
   return (
     <div className="flex flex-col justify-center items-start gap-4 py-6">
       <ModalFieldContainer title="Title">
-        <Input placeholder="Title of your todo" {...form.register("title")} />
+        <Input
+          placeholder="Title of your todo"
+          defaultValue={form.getValues("title")}
+          {...form.register("title")}
+        />
       </ModalFieldContainer>
       <ModalFieldContainer title="Status">
         <FormField
           name="status"
           control={form.control}
+          defaultValue={form.getValues("status") ?? "pending"}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select onValueChange={field.onChange} value={field.value}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -42,8 +47,9 @@ export function ModalContent() {
         <FormField
           name="priority"
           control={form.control}
+          defaultValue={form.getValues("priority") ?? "low"}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select onValueChange={field.onChange} value={field.value}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
