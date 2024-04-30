@@ -13,10 +13,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Todo } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { Todo } from "../../../../../prisma/generated/client";
 
 const headers: { key: string; label: string }[] = [
   { key: "id", label: "Task" },

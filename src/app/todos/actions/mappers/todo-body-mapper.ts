@@ -1,4 +1,4 @@
-import { Todo } from "@prisma/client";
+import { Todo } from "../../../../../prisma/generated/client";
 
 interface TodoBodyMapperProps {
   title: string;

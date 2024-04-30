@@ -20,10 +20,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TableCell } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
-import { Todo } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Ban, Check, Ellipsis, SquarePen, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { Todo } from "../../../../../../prisma/generated/client";
 
 interface DataTableActionsCellProps {
   todoId: number;

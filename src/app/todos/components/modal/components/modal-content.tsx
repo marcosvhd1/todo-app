@@ -9,8 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Todo } from "@prisma/client";
+
 import { useFormContext } from "react-hook-form";
+import { Todo } from "../../../../../../prisma/generated/client";
 
 export function ModalContent() {
   const form = useFormContext<Todo>();

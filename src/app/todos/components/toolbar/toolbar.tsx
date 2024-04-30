@@ -15,11 +15,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { Todo } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { Todo } from "../../../../../prisma/generated/client";
 
 export function Toolbar() {
   const form = useForm<Todo>();

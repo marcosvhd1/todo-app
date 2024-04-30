@@ -2,7 +2,7 @@
 
 import { TodoBodyMapper } from "@/app/todos/actions/mappers/todo-body-mapper";
 import { prisma } from "@/services/database";
-import { Todo } from "@prisma/client";
+import { Todo } from "../../../../prisma/generated/client";
 
 export async function getAll(
   title: string,
