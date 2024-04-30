@@ -1,5 +1,6 @@
 {
   "name": "todo-app",
+  "type": "module",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +8,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
