@@ -1,5 +1,16 @@
-import { getById, upsert } from "@/app/todos/actions/actions";
-import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { getById, remove, upsert } from "@/app/todos/actions/actions";
+import { TodoModal } from "@/app/todos/components/modal/todo-modal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,28 +22,26 @@ import { TableCell } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { Todo } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Ellipsis, SquarePen, Trash2 } from "lucide-react";
+import { Ban, Check, Ellipsis, SquarePen, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { TodoModal } from "../../modal/todo-modal";
 
 interface DataTableActionsCellProps {
   todoId: number;
-  removeFunction: Function;
 }
 
-export function DataTableActionsCell({
-  todoId,
-  removeFunction,
-}: DataTableActionsCellProps) {
+export function DataTableActionsCell({ todoId }: DataTableActionsCellProps) {
   const form = useForm<Todo>();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const removeMutation = useMutation({
+    mutationFn: (todoId: number) => remove(todoId),
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+
   const updateMutation = useMutation({
     mutationFn: (data: Todo) => upsert(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries();
-    },
+    onSuccess: () => queryClient.invalidateQueries(),
   });
 
   async function setModalFieldsData() {
@@ -56,6 +65,15 @@ export function DataTableActionsCell({
     });
   }
 
+  async function handleRemove() {
+    removeMutation.mutate(todoId);
+
+    toast({
+      variant: "destructive",
+      description: "The register has been deleted!",
+    });
+  }
+
   return (
     <TableCell className="w-0">
       <DropdownMenu>
@@ -65,7 +83,9 @@ export function DataTableActionsCell({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="p-2 space-y-2">
-          <DropdownMenuItem onClick={() => removeFunction(todoId)}>
+          <DropdownMenuItem
+            onClick={() => document.getElementById("remove")?.click()}
+          >
             <Trash2 className="text-red-500 size-4 mr-2" />
             Delete
           </DropdownMenuItem>
@@ -75,6 +95,36 @@ export function DataTableActionsCell({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* MODAL DELETE */}
+      <AlertDialog>
+        <AlertDialogTrigger>
+          <span id="remove"></span>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete the register?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="pt-5">
+            <AlertDialogCancel>
+              <Ban className="size-4 mr-2" />
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRemove}
+              className="bg-red-500 text-white"
+            >
+              <Check className="size-4 mr-2" />
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* MODAL EDIT */}
       <AlertDialog>
         <AlertDialogTrigger>
           <span id="edit"></span>

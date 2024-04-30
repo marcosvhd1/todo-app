@@ -1,6 +1,10 @@
 "use client";
 
-import { getAll, remove } from "@/app/todos/actions/actions";
+import { getAll } from "@/app/todos/actions/actions";
+import { DataTableActionsCell } from "@/app/todos/components/data-table/components/data-table-actions-cell";
+import { DataTablePagination } from "@/app/todos/components/data-table/components/data-table-pagination";
+import { DataTablePriorityCell } from "@/app/todos/components/data-table/components/data-table-priority-cell";
+import { DataTableStatusCell } from "@/app/todos/components/data-table/components/data-table-status-cell";
 import {
   Table,
   TableBody,
@@ -9,15 +13,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
 import { Todo } from "@prisma/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { DataTableActionsCell } from "./components/data-table-actions-cell";
-import { DataTablePagination } from "./components/data-table-pagination";
-import { DataTablePriorityCell } from "./components/data-table-priority-cell";
-import { DataTableStatusCell } from "./components/data-table-status-cell";
 
 const headers: { key: string; label: string }[] = [
   { key: "id", label: "Task" },
@@ -29,33 +28,17 @@ const headers: { key: string; label: string }[] = [
 
 export function DataTable() {
   const limit = 30;
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 
   const title = searchParams.get("title") ?? "";
+  const status = searchParams.get("status") ?? "";
+  const priority = searchParams.get("priority") ?? "";
   const page = Number(searchParams.get("page")) ?? 1;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["todos", title, page],
-    queryFn: () => getAll(title, page, limit),
+    queryKey: ["todos", title, status, priority, page],
+    queryFn: () => getAll(title, status, priority, page, limit),
   });
-
-  const removeMutation = useMutation({
-    mutationFn: (todoId: number) => remove(todoId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["todos", title, page] });
-    },
-  });
-
-  function handleRemove(todoId: number) {
-    removeMutation.mutate(todoId);
-
-    toast({
-      variant: "destructive",
-      description: "The register has been deleted!",
-    });
-  }
 
   if (isLoading) {
     return (
@@ -87,10 +70,7 @@ export function DataTable() {
                     </TableCell>
                     <DataTableStatusCell todoStatus={todo.status} />
                     <DataTablePriorityCell todoPriority={todo.priority} />
-                    <DataTableActionsCell
-                      todoId={todo.id}
-                      removeFunction={handleRemove}
-                    />
+                    <DataTableActionsCell todoId={todo.id} />
                   </TableRow>
                 );
               })

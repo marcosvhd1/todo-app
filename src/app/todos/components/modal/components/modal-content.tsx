@@ -1,4 +1,5 @@
 import { ModalFieldContainer } from "@/app/todos/components/modal/components/modal-field-container";
+import { priorities, statuses } from "@/app/todos/data/data";
 import { FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,10 +35,13 @@ export function ModalContent() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="in progress">In Progress</SelectItem>
-                <SelectItem value="canceled">Canceled</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+                {statuses.map((status) => {
+                  return (
+                    <SelectItem key={status.value} value={status.value}>
+                      {status.label}
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           )}
@@ -54,9 +58,13 @@ export function ModalContent() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
+                {priorities.map((priority) => {
+                  return (
+                    <SelectItem key={priority.value} value={priority.value}>
+                      {priority.label}
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           )}

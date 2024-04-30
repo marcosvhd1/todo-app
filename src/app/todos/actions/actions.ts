@@ -4,12 +4,32 @@ import { TodoBodyMapper } from "@/app/todos/actions/mappers/todo-body-mapper";
 import { prisma } from "@/services/database";
 import { Todo } from "@prisma/client";
 
-export async function getAll(title: string, page: number, limit: number) {
+export async function getAll(
+  title: string,
+  status: string,
+  priority: string,
+  page: number,
+  limit: number
+) {
   try {
     const where = {
-      title: {
-        contains: title,
-      },
+      AND: [
+        {
+          title: {
+            contains: title,
+          },
+        },
+        {
+          status: {
+            contains: status,
+          },
+        },
+        {
+          priority: {
+            contains: priority,
+          },
+        },
+      ],
     };
 
     const [count, todos] = await prisma.$transaction([
