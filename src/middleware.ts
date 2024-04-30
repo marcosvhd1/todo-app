@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 function getUrl(path?: string) {
-  const baseUrl = process.env.BASE_URL;
+  const baseUrl = "https://todo-app-weld-seven-35.vercel.app";
   const normalizedPath =
     path && !path.startsWith("/") ? `/${path}` : path || "";
   return `${baseUrl}${normalizedPath}`;
