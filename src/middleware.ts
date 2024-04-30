@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 function getUrl(path?: string) {
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = process.env.BASE_URL;
   const normalizedPath =
     path && !path.startsWith("/") ? `/${path}` : path || "";
   return `${baseUrl}${normalizedPath}`;
